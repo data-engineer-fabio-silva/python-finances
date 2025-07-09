@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    volumes:
+      - /dev/urandom:/dev/random:ro
+    ports:
+      - 3003:3000
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: ${DOCKER_METABASE_HOST}
+      MB_DB_PORT: 5432
+      MB_DB_DBNAME: ${DOCKER_METABASE_DB_NM}      
+      MB_DB_USER: ${DOCKER_METABASE_USER}
+      MB_DB_PASS: ${DOCKER_METABASE_PASSWORD}
+    networks:
+      - metanet1
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+networks:
+  metanet1:
+    driver: bridge
